@@ -21,7 +21,17 @@ import { PolicyService, ManagedIndexService, IndexService } from "./server/servi
 import { indices, policies, managedIndices } from "./server/routes";
 import { DEFAULT_APP_CATEGORIES } from "../../src/core/utils";
 
+// likely imported from another file
+function search(server, request) {
+  const { elasticsearch } = server.plugins;
+  return elasticsearch.getCluster("admin").callWithRequest(request, "search");
+}
+
 export default function (kibana) {
+  const print = function () {
+    console.log("hello from ISM");
+  };
+
   return new kibana.Plugin({
     require: ["elasticsearch"],
     name: "opendistro_index_management_kibana",
@@ -57,6 +67,29 @@ export default function (kibana) {
       indices(server, services);
       policies(server, services);
       managedIndices(server, services);
+
+      server.route({
+        path: "/api/demo_plugin/search",
+        method: "POST",
+        async handler(request) {
+          search(server, request); // target acquired
+        },
+      });
+
+      server.expose("getDemoBar", () => {
+        return `Demo ${server.plugins.foo.getBar()}`;
+      });
+
+      // const myPlugin = server.newPlatform.setup.plugins.opendistroSecurity;
+      // if (!myPlugin) {
+      //   throw new Error('myPlugin plugin is not available.');
+      // }
+      //
+      // console.log('myPlugin is ' + Object.keys(myPlugin) + ' print is ' + print);
+      //
+      // myPlugin.registerLegacyAPI(print);
+      //
+      // console.log('successfully call register');
     },
   });
 }

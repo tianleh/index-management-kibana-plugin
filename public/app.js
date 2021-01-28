@@ -23,6 +23,7 @@ import Main from "./pages/Main";
 import { ServicesContext, IndexService, ManagedIndexService } from "./services";
 import PolicyService from "./services/PolicyService";
 import { DarkModeContext } from "./components/DarkMode";
+import { npSetup, npStart } from "ui/new_platform";
 
 const app = uiModules.get("apps/indexManagementKibana");
 
@@ -36,14 +37,15 @@ app.config(($locationProvider) => {
 app.config((stateManagementConfigProvider) => stateManagementConfigProvider.disable());
 
 function RootController($scope, $element, $http) {
-  const domNode = $element[0];
-
-  // set up services
-  const indexService = new IndexService($http);
-  const managedIndexService = new ManagedIndexService($http);
-  const policyService = new PolicyService($http);
-  const services = { indexService, managedIndexService, policyService };
-  const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
+  npStart.core.http;
+  // const domNode = $element[0];
+  //
+  // // set up services
+  // const indexService = new IndexService($http);
+  // const managedIndexService = new ManagedIndexService($http);
+  // const policyService = new PolicyService($http);
+  // const services = { indexService, managedIndexService, policyService };
+  // const isDarkMode = chrome.getUiSettingsClient().get("theme:darkMode") || false;
 
   // render react to DOM
   render(
